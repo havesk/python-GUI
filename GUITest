@@ -1,8 +1,10 @@
 import tkinter
 import pygeoip
-from tabview import TabView
 from tkinter import messagebox
-
+from tabview import TabView
+from dragwindow import DragWindow
+from tkinter import ttk
+from mydialog import MyDialog
 
 class FindLocation(object):
     def __init__(self):
@@ -243,6 +245,7 @@ class GuiTest(object):
 
     def gui_test11(self):  # 自定义tabview
         root = tkinter.Tk()
+        root.title("自定义tabview");
         root.geometry("640x300")
 
         tab_view = TabView(root, generate_body=self.create_body,
@@ -285,11 +288,169 @@ class GuiTest(object):
         label_1 = tkinter.Label(self.view.body, text="this is tab1")
         self.view.add_tab(label_1, self.text)
 
+    def gui_test12(self):  # 拖拽小挂件
+        root = DragWindow()
+        root.set_window_size(200, 200)
+        root.set_display_postion(500, 400)
+        tkinter.Button(root, text="Exit", command=root.quit).pack(side=tkinter.BOTTOM)
+
+    def gui_test13(self):  # 菜单
+        win = tkinter.Tk()
+        win.title("GUI 菜单")  # 菜单
+        win.geometry("600x500+200+20")  # #窗口位置500后面是字母x
+
+        win.filenew_icon = tkinter.PhotoImage(file='images/add.png')
+        win.fileopen_icon = tkinter.PhotoImage(file='images/open.png')
+        menubar = tkinter.Menu(win)
+        # 添加菜单条
+        win['menu'] = menubar
+        # 创建file_menu菜单，它被放入menubar中
+        file_menu = tkinter.Menu(menubar, tearoff=0)
+        # 使用add_cascade方法添加file_menu菜单
+        menubar.add_cascade(label='文件', menu=file_menu)
+        # 创建lang_menu菜单，它被放入menubar中
+        lang_menu = tkinter.Menu(menubar, tearoff=0)
+        # 使用add_cascade方法添加lang_menu菜单
+        menubar.add_cascade(label='选择语言', menu=lang_menu)
+        # 使用add_command方法为file_menu添加菜单项
+        file_menu.add_command(label="新建", command=None,
+                              image=win.filenew_icon, compound=tkinter.LEFT)
+        file_menu.add_command(label="打开", command=None,
+                              image=win.fileopen_icon, compound=tkinter.LEFT)
+        # 使用add_command方法为file_menu添加分隔条
+        file_menu.add_separator()
+        # 为file_menu创建子菜单
+        sub_menu = tkinter.Menu(file_menu, tearoff=0)
+        # 使用add_cascade方法添加sub_menu子菜单
+        file_menu.add_cascade(label='选择性别', menu=sub_menu)
+        self.genderVar = tkinter.IntVar()
+        # 使用循环为sub_menu子菜单添加菜单项
+        for i, im in enumerate(['男', '女', '保密']):
+            # 使用add_radiobutton方法为sub_menu子菜单添加单选菜单项
+            # 绑定同一个变量，说明它们是一组
+            sub_menu.add_radiobutton(label=im, command=self.choose_gender,
+                                     variable=self.genderVar, value=i)
+        self.langVars = [tkinter.StringVar(), tkinter.StringVar(), tkinter.StringVar(), tkinter.StringVar()]
+        # 使用循环为lang_menu菜单添加菜单项
+        for i, im in enumerate(('Python', 'Kotlin', 'Swift', 'Java')):
+            # 使用add_add_checkbutton方法为lang_menu菜单添加多选菜单项
+            lang_menu.add_checkbutton(label=im, command=self.choose_lang,
+                                      onvalue=im, variable=self.langVars[i])
+
+    def choose_gender(self):
+        tkinter.messagebox.showinfo(message=('选择的性别为: %s' % self.genderVar.get()))
+
+    def choose_lang(self):
+        rt_list = [e.get() for e in self.langVars]
+        tkinter.messagebox.showinfo(message=('选择的语言为: %s' % ','.join(rt_list)))
+
+    def gui_test14(self):  # Label 显示文本和图片
+        win = tkinter.Tk()
+        win.title("GUI 显示文本和图片")  # 菜单
+        win.geometry("500x200")  # #窗口位置500后面是字母x
+        self.master=win
+        # 创建一个位图
+        bm = tkinter.PhotoImage(file='images/Panda.png')
+        # 创建一个Label，同时指定text和image
+        self.label = tkinter.Label(self.master, text='Havesk',
+                               image=bm, font=('StSong', 20, 'bold'), foreground='red')
+        self.label.bm = bm
+        # 设置Label默认的compound为None
+        self.label['compound'] = None
+        self.label.pack()
+        # 创建Frame容器，用于装多个Radiobutton
+        f = tkinter.Frame(self.master)
+        f.pack(fill=tkinter.BOTH, expand=tkinter.YES)
+        compounds = ('None', "LEFT", "RIGHT", "TOP", "BOTTOM", "CENTER")
+        # 定义一个StringVar变量，用作绑定Radiobutton的变量
+        self.var = tkinter.StringVar()
+        self.var.set('None')
+        # 使用循环创建多个Radionbutton组件
+        for val in compounds:
+            rb = tkinter.Radiobutton(f,
+                             text=val,
+                             padx=20,
+                             variable=self.var,
+                             command=self.change_compound,
+                             value=val).pack(side=tkinter.LEFT, anchor=tkinter.CENTER)
+        # 实现change_compound方法，用于动态改变Label的compound选项
+
+    def change_compound(self):
+        self.label['compound'] = self.var.get().lower()
+
+    def gui_test15(self):  # 消息框
+        win = tkinter.Tk()
+        win.title("GUI 消息框")  # 菜单
+        win.geometry("800x300")  # #窗口位置500后面是字母x
+        self.master = win
+        # -----------创建第1个Labelframe，用于选择图标类型-----------
+        topF = tkinter.Frame(self.master)
+        topF.pack(fill=tkinter.BOTH)
+        lf1 = ttk.Labelframe(topF, text='请选择图标类型')
+        lf1.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=tkinter.YES, padx=10, pady=5)
+        i = 0
+        self.iconVar = tkinter.IntVar()
+        self.icons = [None, "error", "info", "question", "warning"]
+        # 使用循环创建多个Radiobutton，并放入Labelframe中
+        for icon in self.icons:
+            tkinter.Radiobutton(lf1, text=icon if icon is not None else '默认',
+                        value=i,
+                        variable=self.iconVar).pack(side=tkinter.TOP, anchor=tkinter.W)
+            i += 1
+        self.iconVar.set(0)
+        # -----------创建第二个Labelframe，用于选择按钮类型-----------
+        lf2 = ttk.Labelframe(topF, text='请选择按钮类型')
+        lf2.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=tkinter.YES, padx=10, pady=5)
+        i = 0
+        self.typeVar = tkinter.IntVar()
+        # 定义所有按钮类型
+        self.types = [None, "abortretryignore", "ok", "okcancel",
+                      "retrycancel", "yesno", "yesnocancel"]
+        # 使用循环创建多个Radiobutton，并放入Labelframe中
+        for tp in self.types:
+            tkinter.Radiobutton(lf2, text=tp if tp is not None else '默认',
+                        value=i,
+                        variable=self.typeVar).pack(side=tkinter.TOP, anchor=tkinter.W)
+            i += 1
+        self.typeVar.set(0)
+        # -----------创建Frame,用于包含多个按钮来生成不同的消息框-----------
+        bottomF = tkinter.Frame(self.master)
+        bottomF.pack(fill=tkinter.BOTH)
+        # 创建1个按钮，并为之绑定事件处理函数
+        btn1 = tkinter.Button(bottomF, text="弹出框",
+                          command=self.showinfo_clicked)
+        btn1.pack();
+
+    def showinfo_clicked(self):
+        print(tkinter.messagebox.showinfo("消息框", self.iconVar.get(),
+                              icon=self.icons[self.iconVar.get()],
+                              type=self.types[self.typeVar.get()]))
+
+    def gui_test16(self):  # 自定义对话框
+        win = tkinter.Tk()
+        win.title("GUI 自定义对话框")  # 菜单
+        win.geometry("250x200")  # #窗口位置500后面是字母x
+        self.master = win
+
+        # 创建2个按钮，并为之绑定事件处理函数
+        ttk.Button(self.master, text='模式对话框',
+                   command=self.open_modal  # 绑定open_modal方法
+                   ).pack(side=tkinter.LEFT, ipadx=5, ipady=5, padx=10)
+        ttk.Button(self.master, text='非模式对话框',
+                   command=self.open_none_modal  # 绑定open_none_modal方法
+                   ).pack(side=tkinter.LEFT, ipadx=5, ipady=5, padx=10)
+
+    def open_modal(self):
+        d = MyDialog(self.master, title='模式对话框')  # 默认是模式对话框
+
+    def open_none_modal(self):
+        d = MyDialog(self.master, title='非模式对话框', modal=False)
+
 if __name__ == "__main__":
    #main()
    FL = GuiTest()
    # 进行布局
-   FL.gui_test11()
+   FL.gui_test16()
    # 主程序执行
    tkinter.mainloop()
 
