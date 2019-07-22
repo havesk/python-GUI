@@ -1,0 +1,3 @@
+#btnName@batFileName
+启动bpmnx@bpmn_start.bat
+启动文本编辑器@notepad
